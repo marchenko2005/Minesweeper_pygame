@@ -7,7 +7,7 @@ pygame.init()
 clock = pygame.time.Clock()
 icon_bomb = pygame.image.load("bomb.png")
 pygame.display.set_icon(icon_bomb)
-screen = pygame.display.set_mode((400, 400))
+screen = pygame.display.set_mode((350, 400))
 pygame.display.set_caption("Minesweeper")
 
 color_brown = pygame.Color(84, 51, 16)
@@ -105,3 +105,49 @@ place_bombs()
 flags_used = 0
 checked_blocks = []
 remaining_blocks = 0
+
+
+# Функція для малювання блоків
+def render_blocks():
+    global flags_used
+    global remaining_blocks
+    flags_used = 0
+    remaining_blocks = 0
+    for block in blocks:
+        if block.flag_status == -3:
+            remaining_blocks += 1
+            screen.blit(block_image, block.position)
+        elif block.flag_status == 0:
+            if block not in checked_blocks:
+                find_path(block)
+            screen.blit(blank_block_image, block.position)
+        elif block.flag_status == 9:
+            screen.blit(explode_image, block.position)
+            handle_loss()
+        elif block.flag_status == -2:
+            screen.blit(flag_image, block.position)
+            flags_used += 1
+        elif block.flag_status == -1:
+            screen.blit(question_image, block.position)
+        elif 1 <= block.flag_status <= 8:
+            screen.blit(warning_images[block.flag_status - 1], block.position)
+    if remaining_blocks == 10:
+        handle_win()
+
+# Функція для перевірки меж екрану
+def is_within_bounds(pos):
+    return Rect(20, 20, 306, 306).collidepoint(pos)
+
+# Функція для визначення блоку під курсором миші
+def get_hovered_block(pos):
+    for block in blocks:
+        if block.position.collidepoint(pos):
+            return block
+    return None
+
+# Функція для визначення блоку за координатами
+def get_block_at(x, y):
+    for block in blocks:
+        if block.x == x and block.y == y:
+            return block
+    return None
