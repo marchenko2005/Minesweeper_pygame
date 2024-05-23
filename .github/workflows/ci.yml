@@ -33,6 +33,10 @@ jobs:
         flake8 --format=html --htmldir=flake8-report
       continue-on-error: true
 
+    - name: Check if flake8 report exists
+      run: |
+        if [ -d "flake8-report" ]; then echo "Flake8 report created successfully"; else echo "Flake8 report not created"; fi
+
     - name: Archive flake8 report
       if: always()
       uses: actions/upload-artifact@v2
@@ -45,6 +49,10 @@ jobs:
         pip install pytest pytest-html
         pytest --html=pytest-report.html --self-contained-html
       continue-on-error: true
+
+    - name: Check if pytest report exists
+      run: |
+        if [ -f "pytest-report.html" ]; then echo "Pytest report created successfully"; else echo "Pytest report not created"; fi
 
     - name: Archive pytest report
       if: always()
