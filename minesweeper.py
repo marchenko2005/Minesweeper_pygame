@@ -199,3 +199,41 @@ def find_path(block):
     checked_blocks.append(block)
 
 last_game_time = 0
+
+
+# Функція для програшу
+def handle_loss():
+    response = showMessageBox("Вибачте, ви програли!", "Ви програли! Повторити гру?", 1)
+    if response == 1:  # ID 1 відповідає кнопці "ОК" або "Так"
+        reset_game()
+    else:
+        pygame.quit()
+        sys.exit()
+
+# Функція для виграшу
+def handle_win():
+    response = showMessageBox("Вітаємо, ви виграли!", "Ви виграли! Повторити гру?", 1)
+    if response == 1:  # ID 1 відповідає кнопці "ОК" або "Так"
+        reset_game()
+    else:
+        pygame.quit()
+        sys.exit()
+
+# Функція для скидання гри
+def reset_game():
+    global clock
+    global blocks
+    global total_bombs
+    global flags_used
+    global checked_blocks
+    global remaining_blocks
+    global last_game_time
+    clock = pygame.time.Clock()
+    blocks[:] = []
+    total_bombs = 0
+    initialize_blocks()
+    place_bombs()
+    flags_used = 0
+    checked_blocks = []
+    remaining_blocks = 0
+    last_game_time = pygame.time.get_ticks()
