@@ -29,7 +29,8 @@ jobs:
         pip install flake8 flake8-html pytest pytest-html
 
     - name: Lint with flake8
-      run: flake8 --format=html --htmldir=flake8-report
+      run: |
+        flake8 --format=html --htmldir=flake8-report
       continue-on-error: true
 
     - name: Archive flake8 report
@@ -50,7 +51,7 @@ jobs:
         name: pytest-report
         path: pytest-report.html
 
-    - name: Add test and lint reports to commit comment
+    - name: Create a summary comment
       if: always()
       run: |
         echo "## Lint Report" > comment.md
