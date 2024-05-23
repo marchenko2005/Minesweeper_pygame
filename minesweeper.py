@@ -174,3 +174,28 @@ def get_warning_count(block):
     return warning_count
 
 blocks_to_check = []
+
+# Функція для пошуку шляхів (рекурсивна)
+def get_cross_path(block):
+    paths = []
+    if block.x > 0:
+        paths.append(get_block_at(block.x - 1, block.y))
+    if block.x < 9:
+        paths.append(get_block_at(block.x + 1, block.y))
+    if block.y > 0:
+        paths.append(get_block_at(block.x, block.y - 1))
+    if block.y < 9:
+        paths.append(get_block_at(block.x, block.y + 1))
+    return paths
+
+def find_path(block):
+    for cross_block in get_cross_path(block):
+        if cross_block and get_warning_count(cross_block) == 0:
+            cross_block.flag_status = 0
+    for adj_block in get_adjacent_blocks(block):
+        warning = get_warning_count(adj_block)
+        if 0 < warning < 9:
+            adj_block.flag_status = warning
+    checked_blocks.append(block)
+
+last_game_time = 0
