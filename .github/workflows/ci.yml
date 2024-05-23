@@ -29,12 +29,12 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        pip install flake8
+        pip install flake8 flake8-html
         flake8 --format=html --htmldir=flake8-report
       continue-on-error: true
 
     - name: Archive flake8 report
-      if: failure() || success()
+      if: always()
       uses: actions/upload-artifact@v2
       with:
         name: flake8-report
@@ -47,8 +47,23 @@ jobs:
       continue-on-error: true
 
     - name: Archive pytest report
-      if: failure() || success()
+      if: always()
       uses: actions/upload-artifact@v2
       with:
         name: pytest-report
         path: pytest-report.html
+
+    - name: Add test and lint reports to commit comment
+      if: always()
+      run: |
+        echo "## Lint Report" > comment.md
+        echo "[Flake8 Report](./flake8-report/index.html)" >> comment.md
+        echo "## Test Report" >> comment.md
+        echo "[Pytest Report](./pytest-report.html)" >> comment.md
+
+    - name: Create a comment with reports
+      if: always()
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        path: comment.md
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
