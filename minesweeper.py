@@ -1,11 +1,12 @@
-import pygame, sys
+import pygame
+import sys
 from random import randrange
 from pygame.locals import *
 from ctypes import windll
 
 pygame.init()
 
-# Constants
+# Констани
 SCREEN_WIDTH = 350
 SCREEN_HEIGHT = 400
 GRID_SIZE = 9
@@ -23,43 +24,51 @@ COLOR_BLUE = pygame.Color(0, 0, 255)
 COLOR_WHITE = pygame.Color(255, 255, 255)
 COLOR_BLACK = pygame.Color(0, 0, 0)
 
+
+# Клас Block представляє один блок на полі
 class Block:
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.position = Rect(x * BLOCK_SIZE + MARGIN, y * BLOCK_SIZE + MARGIN, BLOCK_SIZE, BLOCK_SIZE)
-        self.is_bomb = False
-        self.flag_status = -3  # -3 = no flag, -2 = flag, -1 = question mark, 0 = blank, 1-8 = warnings, 9 = explosion
-        self.index = 0
+        self.x = x  # Координата X блоку
+        self.y = y  # Координата Y блоку
+        self.position = Rect(x * BLOCK_SIZE + MARGIN, y * BLOCK_SIZE + MARGIN, BLOCK_SIZE, BLOCK_SIZE)  # Позиція блоку на екрані
+        self.is_bomb = False  # Чи є цей блок бомбою
+        self.flag_status = -3  # Статус прапорця: -3 = без прапорця, -2 = прапорець, -1 = знак питання, 0 = порожньо, 1-8 = попередження, 9 = вибух
+        self.index = 0  # Індекс блоку в масиві
 
+
+# Відповідає за управляє всіма блоками на полі
 class BlockManager:
     def __init__(self):
-        self.blocks = []
-        self.checked_blocks = []
-        self.total_bombs = 0
-        self.flags_used = 0
-        self.remaining_blocks = 0
+        self.blocks = []  # Список всіх блоків
+        self.checked_blocks = []  # Список перевірених блоків
+        self.total_bombs = 0  # Загальна кількість бомб
+        self.flags_used = 0  # Кількість використаних прапорців
+        self.remaining_blocks = 0  # Кількість залишених блоків
 
+    # Ініціалізація блоків на полі
     def initialize_blocks(self):
         for x in range(GRID_SIZE):
             for y in range(GRID_SIZE):
-                block = Block(x, y)
-                block.index = len(self.blocks)
-                self.blocks.append(block)
-    
+                block = Block(x, y)  # Створення нового блоку
+                block.index = len(self.blocks)  # Присвоєння індексу блоку
+                self.blocks.append(block)  # Додавання блоку до списку
+
+    # Розміщення бомб випадковим чином на полі
     def place_bombs(self):
         while self.total_bombs < TOTAL_BOMBS:
-            index = randrange(0, len(self.blocks))
+            index = randrange(0, len(self.blocks))  # Випадковий індекс блоку
             if not self.blocks[index].is_bomb:
-                self.blocks[index].is_bomb = True
-                self.total_bombs += 1
+                self.blocks[index].is_bomb = True  # Призначення блоку бомбою
+                self.total_bombs += 1  # Збільшення кількості бомб
 
+    # Повернення блоку за координатами
     def get_block_at(self, x, y):
         for block in self.blocks:
             if block.x == x and block.y == y:
-                return block
-        return None
+                return block  # Знайдено блок
+        return None  # Блок не знайдено
 
+    # Повернення сусідніх блоків
     def get_adjacent_blocks(self, block):
         neighbors = []
         for dx in [-1, 0, 1]:
@@ -69,16 +78,18 @@ class BlockManager:
                 neighbor = self.get_block_at(block.x + dx, block.y + dy)
                 if neighbor:
                     neighbors.append(neighbor)
-        return neighbors
+        return neighbors  # Повернення списку сусідніх блоків
 
+    # Підрахунок кількості попереджувальних блоків навколо
     def get_warning_count(self, block):
         warning_count = 0
         neighbors = self.get_adjacent_blocks(block)
         for neighbor in neighbors:
             if neighbor.is_bomb:
                 warning_count += 1
-        return warning_count
+        return warning_count  # Повернення кількості попереджувальних блоків
 
+    # Пошук шляху для перевірки блоків
     def find_path(self, block):
         cross_blocks = self.get_cross_path(block)
         for cross_block in cross_blocks:
@@ -90,7 +101,8 @@ class BlockManager:
             if 0 < warning < 9:
                 adj_block.flag_status = warning
         self.checked_blocks.append(block)
-    
+
+    # Повернення блоків по горизонталі та вертикалі
     def get_cross_path(self, block):
         paths = []
         if block.x > 0:
@@ -103,6 +115,8 @@ class BlockManager:
             paths.append(self.get_block_at(block.x, block.y + 1))
         return paths
 
+
+# Відповідає за інтерфейс користувача в грі 
 class MinesweeperUI:
     def __init__(self, game):
         self.game = game
@@ -177,6 +191,8 @@ class MinesweeperUI:
         self.render_blocks()
         pygame.display.update()
 
+
+# Відповідає за управління основними механіками ігрового процесу 
 class Game:
     def __init__(self):
         self.ui = MinesweeperUI(self)
@@ -258,6 +274,7 @@ class Game:
             self.handle_events()
             self.ui.display()
             self.ui.clock.tick(FPS)
+
 
 if __name__ == "__main__":
     game = Game()
