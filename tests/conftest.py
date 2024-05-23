@@ -1,6 +1,5 @@
 import pytest
 from minesweeper import BlockManager
-from minesweeper import Block
 
 
 @pytest.fixture
