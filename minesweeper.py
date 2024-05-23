@@ -7,7 +7,7 @@ pygame.init()
 clock = pygame.time.Clock()
 icon_bomb = pygame.image.load("bomb.png")
 pygame.display.set_icon(icon_bomb)
-screen = pygame.display.set_mode((350, 400))
+screen = pygame.display.set_mode((400, 400))
 pygame.display.set_caption("Minesweeper")
 
 color_brown = pygame.Color(84, 51, 16)
@@ -91,3 +91,17 @@ def initialize_blocks():
             screen.blit(block_image, (x*34 + 20, y*34 + 20))
 
 initialize_blocks()
+
+# Функція для розміщення бомб
+def place_bombs():
+    global total_bombs
+    while total_bombs < 10:
+        index = randrange(0, len(blocks))
+        if not blocks[index].is_bomb:
+            blocks[index].is_bomb = True
+            total_bombs += 1
+
+place_bombs()
+flags_used = 0
+checked_blocks = []
+remaining_blocks = 0
