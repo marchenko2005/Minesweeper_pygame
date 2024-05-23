@@ -151,3 +151,26 @@ def get_block_at(x, y):
         if block.x == x and block.y == y:
             return block
     return None
+
+# Функція для визначення сусідніх блоків
+def get_adjacent_blocks(block):
+    neighbors = []
+    for dx in [-1, 0, 1]:
+        for dy in [-1, 0, 1]:
+            if dx == 0 and dy == 0:
+                continue
+            neighbor = get_block_at(block.x + dx, block.y + dy)
+            if neighbor:
+                neighbors.append(neighbor)
+    return neighbors
+
+# Функція для отримання кількості попереджень
+def get_warning_count(block):
+    warning_count = 0
+    neighbors = get_adjacent_blocks(block)
+    for neighbor in neighbors:
+        if neighbor.is_bomb:
+            warning_count += 1
+    return warning_count
+
+blocks_to_check = []
