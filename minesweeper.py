@@ -3,7 +3,10 @@ import sys
 from random import randrange
 from pygame.locals import *
 from ctypes import windll
+import platform
 
+if platform.system() == "Windows":
+    from ctypes import windll
 pygame.init()
 
 # Констани
