@@ -28,6 +28,11 @@ jobs:
         pip install -r requirements.txt
         pip install flake8 flake8-html pytest pytest-html
 
+    - name: Verify pytest and pytest-html installation
+      run: |
+        pip show pytest
+        pip show pytest-html
+
     - name: Lint with flake8
       run: |
         flake8 --format=html --htmldir=flake8-report
@@ -43,6 +48,15 @@ jobs:
     - name: Run tests
       run: pytest --html=pytest-report.html --self-contained-html
       continue-on-error: true
+
+    - name: Check for pytest report
+      run: |
+        if [ ! -f pytest-report.html ]; then
+          echo "Pytest report not found!"
+          exit 1
+        else
+          echo "Pytest report found."
+        fi
 
     - name: Archive pytest report
       if: always()
